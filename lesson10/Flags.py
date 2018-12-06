@@ -26,7 +26,7 @@ def solution(A):
             peaks.append(p)
     
     for flags in range(len(peaks), 0, -1):
-        if place_flags(peaks, flags):
+        if peaks[-1] // flags >= flags and place_flags(peaks, flags):
             return flags
             
     return 0

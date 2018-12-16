@@ -21,7 +21,6 @@ def generate_sums(semiprimes):
     return partial_sums
 
 def solution(N, P, Q):
-    # perhaps partial sums for performance?
     factors = smallest_factors(N)
     semiprimes = [0] * (N + 1)
     start = min(P)

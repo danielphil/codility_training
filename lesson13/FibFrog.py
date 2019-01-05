@@ -1,6 +1,3 @@
-# you can write to stdout for debugging purposes, e.g.
-# print("this is a debug message")
-
 def generate_fib():
     # skip the first two elements.
     # No point in duplicating 1 or jumping 0
@@ -14,42 +11,66 @@ def generate_fib():
         
     return fib
 
-def try_jump(pos, river, valid_jumps, jumps_so_far, best_so_far):
-    if jumps_so_far > best_so_far:
-        # don't bother continuing, we've already found a better route
-        return -1
-        
-    best_jump = -1
-    for potential_jump in reversed(valid_jumps):
-        new_pos = pos + potential_jump
-        if new_pos >= len(river) or river[new_pos] == 0:
-            # jumped past the end of the river or into the water
-            # try next jump size
-            continue
-        
-        # valid jump!
-        # if we've hit the bank, we're done
-        if new_pos == len(river) - 1:
-            return jumps_so_far + 1
-        else:
-            # make our next jump
-            result = try_jump(new_pos, river, valid_jumps, jumps_so_far + 1, best_so_far)
-            if result != -1:
-                # we successfully jumped!
-                if best_jump == -1:
-                    best_jump = result
-                else:
-                    best_jump = min(result, best_jump)
-        
-    return best_jump
-    
 def solution(A):
+    # tests:
+    # [1, 1, 0, 0, 0]
+    # [0, 0, 0]
+    # []
+    # [1]
+    
+    # if there's either no river, or just one section of river,
+    # we can always clear it in one jump
+    if len(A) < 2:
+        return 1
+        
     fib = generate_fib()
     
-    # add the two banks to the river
+    # add the end bank to the river
     river = A + [1]
     
-    # frog starts on the bank
-    result = try_jump(-1, river, fib, 0, 100001)
+    # build an array of minimum jumps to reach each position on
+    # the river
     
-    return result
+    # initialize the min_jumps list from our starting position
+    min_jumps = [0] * len(river)
+    for jump in fib:
+        pos = jump - 1
+        if pos < len(river) and river[pos] == 1:
+            min_jumps[pos] = 1
+    
+    # the last element of min_jumps holds the number of jumps required
+    # to reach the bank
+    if min_jumps[-1] == 1:
+        # We were able to jump to the bank already!
+        return 1
+    
+    for i in range(len(river) - 1):
+        if min_jumps[i] == 0:
+            # this element can't be jumped to
+            continue
+        
+        # hop from this location to see where we can jump to
+        for jump in fib:
+            j = i + jump
+            if j >= len(river):
+                # jumped past the end of the river
+                continue
+            
+            if river[j] == 0:
+                # nothing to jump to here
+                continue
+            
+            new_jumps = min_jumps[i] + 1
+            # update min_jumps at j if min_jumps was either 0 at
+            # that position, or we've found a smaller number of jumps
+            if min_jumps[j] == 0:
+                min_jumps[j] = new_jumps
+            elif min_jumps[j] > new_jumps:
+                min_jumps[j] = new_jumps
+    
+    if min_jumps[-1] == 0:
+        # we were never able to reach the bank
+        return -1
+    else:
+        # final element contains the minimum number of jumps to reach the bank
+        return min_jumps[-1]

@@ -1,21 +1,18 @@
 def validate(A, B, C, nails_to_use):
     planks = len(A)
-    nailed = [False] * planks
-    still_to_nail = planks
+    sorted_nails = sorted(C[:nails_to_use])
 
-    
-    for nail_index in range(nails_to_use):
-        nail = C[nail_index]
-        for i in range(planks):
-            if not nailed[i] and A[i] <= nail <= B[i]:
-                nailed[i] = True
-                still_to_nail -= 1
+    for i in range(planks):
+        nailed = False
+        for nail in sorted_nails:
+            if A[i] <= nail <= B[i]:
+                nailed = True
+                break
 
-        if still_to_nail == 0:
-            # all planks nailed
-            return True
-    
-    return False
+        if not nailed:
+            return False
+
+    return True
 
 def solution(A, B, C):
     # binary search through all the nails

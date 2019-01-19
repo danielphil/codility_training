@@ -1,18 +1,17 @@
 def validate(A, B, C, nails_to_use):
     planks = len(A)
-    to_nail = set(range(planks))
+    nailed = [False] * planks
+    still_to_nail = planks
 
+    
     for nail_index in range(nails_to_use):
         nail = C[nail_index]
-        to_remove = []
-        for i in to_nail:
-            if A[i] <= nail <= B[i]:
-                to_remove.append(i)
+        for i in range(planks):
+            if not nailed[i] and A[i] <= nail <= B[i]:
+                nailed[i] = True
+                still_to_nail -= 1
 
-        for index in to_remove:
-            to_nail.remove(index)
-            
-        if len(to_nail) == 0:
+        if still_to_nail == 0:
             # all planks nailed
             return True
     

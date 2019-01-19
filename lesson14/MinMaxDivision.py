@@ -22,9 +22,12 @@ def solution(K, M, A):
     lower_bound = max(A)
     upper_bound = sum(A)
     
-    for max_sum in range(lower_bound, upper_bound + 1):
+    while lower_bound != upper_bound:
+        max_sum = (lower_bound + upper_bound) // 2
         if validate_blocks(K, A, max_sum):
-            return max_sum
+            upper_bound = max_sum
+        else:
+            lower_bound = max_sum + 1
             
-    return max_sum
+    return lower_bound
     
